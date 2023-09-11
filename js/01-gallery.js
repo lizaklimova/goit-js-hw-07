@@ -27,14 +27,22 @@ let instance = null;
 
 function onClickHandler(event) {
   event.preventDefault();
-  window.addEventListener("keydown", onKeydownHandler);
+
   if (event.currentTarget === event.target) {
     return;
   }
   const origUrl = event.target.dataset.source;
   const description = event.target.alt;
   instance = basicLightbox.create(
-    `<img src="${origUrl}" alt="${description}" />`
+    `<img src="${origUrl}" alt="${description}" />`,
+    {
+      onShow: () => {
+        window.addEventListener("keydown", onKeydownHandler);
+      },
+      onClose: () => {
+        window.removeEventListener("keydown", onKeydownHandler);
+      },
+    }
   );
   instance.show();
 }
@@ -43,6 +51,4 @@ function onKeydownHandler(event) {
   if (event.key === "Escape") {
     instance.close();
   }
-
-  window.removeEventListener("keydown", onKeydownHandler);
 }
